@@ -1,6 +1,6 @@
 <?php
 
-namespace src\Decorator;
+namespace Decorator;
 
 use DateTime;
 use Exception;
@@ -19,13 +19,17 @@ class DataProviderManager extends DataProviderDecorator
    * @param string $password
    * @param CacheItemPoolInterface $cache
    */
-  public function __construct(IDataProvider $dataProvider, CacheItemPoolInterface $cache)
+  public function __construct(IDataProvider $dataProvider, CacheItemPoolInterface $cache, LoggerInterface $logger)
   {
     parent::__construct($dataProvider);
     $this->cache = $cache;
+    $this->logger = $logger;
   }
 
   /**
+   * @param array $request
+   * @return array
+   *
    * {@inheritdoc}
    */
   public function getResponse(array $request)
@@ -47,17 +51,10 @@ class DataProviderManager extends DataProviderDecorator
 
       return $result;
     } catch (Exception $e) {
-      if ($this->logger !== null) {
-        $this->logger->critical('Error');
-      }
+        $this->logger->critical($e->getMessage());
     }
 
     return [];
-  }
-
-  public function setLogger(LoggerInterface $logger)
-  {
-    $this->logger = $logger;
   }
 
   /**
@@ -66,6 +63,11 @@ class DataProviderManager extends DataProviderDecorator
    */
   private function getCacheKey(array $input)
   {
-    return json_encode($input);
+    $result = json_encode($input);
+    if ($result === FALSE) {
+      throw new Exception(json_last_error());
+    }
+
+    return $result;
   }
 }

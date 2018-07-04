@@ -1,6 +1,6 @@
 <?php
 
-namespace src\Decorator;
+namespace Decorator;
 
 abstract class DataProviderDecorator implements IDataProvider
 {

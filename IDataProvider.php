@@ -1,6 +1,6 @@
 <?php
 
-namespace src\Integration;
+namespace Integration;
 
 interface IDataProvider
 {
